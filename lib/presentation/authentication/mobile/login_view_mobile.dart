@@ -40,12 +40,17 @@ class _LoginViewMobileState extends State<LoginViewMobile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: AppColor.appBackground,
-        body: Center(
-          child: SizedBox(
-            width: 411,
-            child: Column(
+      backgroundColor: AppColor.appBackground,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            top: MediaQuery.of(context).size.height * 0.1,
+          ),
+          child: Center(
+            child: SizedBox(
+              width: 411,
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -63,8 +68,7 @@ class _LoginViewMobileState extends State<LoginViewMobile> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 32),
                         width: 380,
-                        child:
-                            BlocListener<LoginRegisterBloc, LoginRegisterState>(
+                        child: BlocListener<LoginRegisterBloc, LoginRegisterState>(
                           bloc: locator<LoginRegisterBloc>(),
                           listener: (context, state) {
                             if (state is LoginFailed) {
@@ -82,8 +86,7 @@ class _LoginViewMobileState extends State<LoginViewMobile> {
                               );
                             }
                           },
-                          child: BlocBuilder<LoginRegisterBloc,
-                              LoginRegisterState>(
+                          child: BlocBuilder<LoginRegisterBloc, LoginRegisterState>(
                             bloc: locator<LoginRegisterBloc>(),
                             builder: (context, state) {
                               if (state is LoginRegisterLoading) {
@@ -115,9 +118,7 @@ class _LoginViewMobileState extends State<LoginViewMobile> {
                                       },
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 15,
-                                  ),
+                                  const SizedBox(height: 15),
                                   const Text(
                                     'Or',
                                     style: TextStyle(
@@ -126,52 +127,46 @@ class _LoginViewMobileState extends State<LoginViewMobile> {
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 15,
-                                  ),
+                                  const SizedBox(height: 15),
                                   CustomTextField(
-                                      controller: emailController,
-                                      text: 'Email',
-                                      validateFunction: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please enter email.';
-                                        } else if (!value.contains('@')) {
-                                          return 'Please enter a valid email.';
-                                        }
-                                        return null;
+                                    controller: emailController,
+                                    text: 'Email',
+                                    validateFunction: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter email.';
+                                      } else if (!value.contains('@')) {
+                                        return 'Please enter a valid email.';
+                                      }
+                                      return null;
+                                    },
+                                    autoValid: AutovalidateMode.onUserInteraction,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  CustomTextField(
+                                    controller: passwordController,
+                                    text: 'Password',
+                                    isSeen: !isSeen,
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          isSeen = !isSeen;
+                                        });
                                       },
-                                      autoValid:
-                                          AutovalidateMode.onUserInteraction),
-                                  const SizedBox(
-                                    height: 16,
-                                  ),
-                                  CustomTextField(
-                                      controller: passwordController,
-                                      text: 'Password',
-                                      isSeen: isSeen,
-                                      suffixIcon: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            isSeen = !isSeen;
-                                          });
-                                        },
-                                        icon: Icon(!isSeen
-                                            ? Icons.visibility_off
-                                            : Icons.visibility),
+                                      icon: Icon(
+                                        !isSeen ? Icons.visibility_off : Icons.visibility,
                                       ),
-                                      validateFunction: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please enter password.';
-                                        } else if (value.length < 6) {
-                                          return 'Password must be at least 6 characters.';
-                                        }
-                                        return null;
-                                      },
-                                      autoValid:
-                                          AutovalidateMode.onUserInteraction),
-                                  const SizedBox(
-                                    height: 4,
+                                    ),
+                                    validateFunction: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter password.';
+                                      } else if (value.length < 6) {
+                                        return 'Password must be at least 6 characters.';
+                                      }
+                                      return null;
+                                    },
+                                    autoValid: AutovalidateMode.onUserInteraction,
                                   ),
+                                  const SizedBox(height: 4),
                                   Align(
                                     alignment: Alignment.bottomRight,
                                     child: TextButton(
@@ -192,40 +187,36 @@ class _LoginViewMobileState extends State<LoginViewMobile> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
+                                  const SizedBox(height: 20),
                                   SizedBox(
-                                      width: double.infinity,
-                                      child: CustomElevatedButton(
-                                          onPressed: () {
-                                            if (formKey.currentState!
-                                                .validate()) {
-                                              locator<LoginRegisterBloc>().add(
-                                                LoginWithEmailPressed(
-                                                  email: emailController.text,
-                                                  password:
-                                                      passwordController.text,
+                                    width: double.infinity,
+                                    child: CustomElevatedButton(
+                                      onPressed: () {
+                                        if (formKey.currentState!.validate()) {
+                                          locator<LoginRegisterBloc>().add(
+                                            LoginWithEmailPressed(
+                                              email: emailController.text,
+                                              password: passwordController.text,
+                                            ),
+                                          );
+                                        } else {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Please enter valid email and password',
+                                                style: AppTextStyles.s14(
+                                                  color: AppColor.appWhite,
+                                                  fontType: FontType.MEDIUM,
                                                 ),
-                                              );
-                                            } else {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                    'Please enter valid email and password',
-                                                    style: AppTextStyles.s14(
-                                                      color: AppColor.appWhite,
-                                                      fontType: FontType.MEDIUM,
-                                                    ),
-                                                  ),
-                                                  backgroundColor:
-                                                      AppColor.appSecondary,
-                                                ),
-                                              );
-                                            }
-                                          },
-                                          text: 'Login')),
+                                              ),
+                                              backgroundColor: AppColor.appSecondary,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      text: 'Login',
+                                    ),
+                                  ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -262,9 +253,13 @@ class _LoginViewMobileState extends State<LoginViewMobile> {
                         ),
                       ),
                     ),
-                  )
-                ]),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
