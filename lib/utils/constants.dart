@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:monumento/utils/app_colors.dart';
 import 'package:monumento/utils/app_text_styles.dart';
@@ -14,6 +15,8 @@ class CustomTextField extends StatelessWidget {
   final String? Function(String?)? validateFunction;
   final AutovalidateMode? autoValid;
   final bool isDesktop;
+  final TextInputAction? textInputAction;
+  final VoidCallback? onEditingComplete;
   const CustomTextField(
       {super.key,
       required this.controller,
@@ -22,7 +25,10 @@ class CustomTextField extends StatelessWidget {
       this.validateFunction,
       this.autoValid,
       this.isSeen,
-      this.isDesktop = false});
+      this.isDesktop = false,
+      this.textInputAction,
+      this.onEditingComplete,
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +36,8 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       obscureText: isSeen ?? false,
       validator: validateFunction,
+      textInputAction: textInputAction,
+      onEditingComplete: onEditingComplete,
       autovalidateMode: autoValid,
       decoration: InputDecoration(
         suffixIcon: suffixIcon,
